@@ -44,29 +44,17 @@ def apply_blur(image_path):
     else:
         return False
 
-def create_video_with_audio(image_path, audio_path,subtitle_path, output_path):
+def create_video_with_audio(image_path, audio_path, output_path):
     # Carrega a imagem
     image_clip = VideoClip(lambda t: ImageClip(image_path).get_frame(t), duration=AudioFileClip(audio_path).duration)
 
     # Carrega o áudio
     audio_clip = AudioFileClip(audio_path)
 
-    # Carrega o arquivo de legenda .srt
-    subs = pysrt.open(subtitle_path)
-
-
 
     # Cria o vídeo com a imagem e o áudio
     video_clip = image_clip.set_audio(audio_clip)
 
-    # Adiciona cada legenda ao vídeo
-    for sub in subs:
-        # Converte o tempo de início e fim das legendas para segundos
-        start_time = sub.start.to_time().hour * 3600 + sub.start.to_time().minute * 60 + sub.start.to_time().second + sub.start.to_time().microsecond / 1e6
-        end_time = sub.end.to_time().hour * 3600 + sub.end.to_time().minute * 60 + sub.end.to_time().second + sub.end.to_time().microsecond / 1e6
-
-        # Adiciona a legenda ao vídeo
-        video_clip = video_clip.subclip(start_time, end_time).set_caption(sub.text)
 
     # Salva o vídeo
     video_clip.write_videofile(output_path, codec='libx264', audio_codec='aac', fps=24)
